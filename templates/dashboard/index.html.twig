@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+<div class="d-flex">
+
+  <div class="sidebar">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 450px; height: 96vh;">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <svg class="bi pe-none me-2" width="40" height="32">
+          <use xlink:href="#bootstrap"></use>
+        </svg>
+        <p>Hello,{{ app.user.email }}</p>
+        <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#" class="nav-link active" aria-current="page">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#"></use>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+        <a href="{{ path('app_profile', {id: app.user.id}) }}" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16">
+            <use xlink:href="#speedometer2"></use>
+          </svg>
+          Profile
+        </a>
+        </li>
+        <li>
+          <a href="{{ path('app_upcomingexam') }}" class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#table"></use>
+            </svg>
+            Upcoming Exams
+          </a>
+        </li>
+        <li>
+          <a href="{{ path('app_appliedexam') }}" class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#grid"></use>
+            </svg>
+            Applied Exams
+          </a>
+        </li>
+        <li>
+          <a href="{{ path('app_result') }}" class="nav-link text-white">
+            <svg class="bi pe-none me-2" width="16" height="16">
+              <use xlink:href="#people-circle"></use>
+            </svg>
+            Result
+          </a>
+        </li>
+      </ul>
+      <hr>
+        <a href="{{ path('app_logout') }}">
+          <button class="btn btn-danger">Log Out</button>
+        </a>
+    </div>
+</div>
+
+  <div class="container mt-4 content d-flex text-center">
+
+    <div class="box rounded box-shadow m-4 p-4 ">
+      <h2 class="mt-4">Upcoming Exams</h2>
+      <p>You can check your upcoming exams here.</p>
+      <a href="{{ path('app_upcomingexam') }}">
+      <button class="btn btn-primary ">Upcoming Exam</button>
+      </a>
+    </div>
+
+    <div class="box rounded box-shadow m-4 p-4">
+      <h2 class="mt-4">Applied Exams</h2>
+      <p>You can check your applied exams here.</p>
+      <a href="{{ path('app_appliedexam') }}">
+      <button class="btn btn-primary ">Applied Exam</button>
+      </a>
+    </div>
+
+    <div class="box rounded box-shadow m-4 pt-4">
+      <h2 class="mt-4">Show Results</h2>
+      <p>You can check your result here.</p>
+      <a href="{{ path('app_result') }}">
+      <button class="btn btn-primary ">Show Result</button>
+      </a>
+    </div>
+
+  </div>
+</div>
+<div class="container mt-4 content d-flex text-center">
+
+	<div class="box rounded box-shadow m-4 p-4 ">
+		<h2 class="mt-4">Upcoming Exams</h2>
+		<p>You can check your upcoming exams here.</p>
+		<a href="{{ path('app_upcomingexam') }}">
+			<button class="btn btn-primary ">Upcoming Exam</button>
+		</a>
+	</div>
+
+	<div class="box rounded box-shadow m-4 p-4">
+		<h2 class="mt-4">Applied Exams</h2>
+		<p>You can check your applied exams here.</p>
+		<a href="{{ path('app_appliedexam') }}">
+			<button class="btn btn-primary ">Applied Exam</button>
+		</a>
+	</div>
+
+	<div class="box rounded box-shadow m-4 pt-4">
+		<h2 class="mt-4">Show Results</h2>
+		<p>You can check your result here.</p>
+		<a href="{{ path('app_result') }}">
+			<button class="btn btn-primary ">Show Result</button>
+		</a>
+	</div>
+
+
+{% endblock %}

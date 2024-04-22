@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+  <div class="header mt-4 p-2 border border-dark rounded bg-dark text-light">
+    <h2 class="text-center">Good Luck</h2>
+  </div>
+  <div class="box-shadow rounded mt-2 p-4 ">
+
+    <form action="{{ path('app_submitExam', {'examId': examId}) }}" method="POST">
+      {% for question in questions %}
+        <div>
+          <p>{{loop.index}}). {{ question.ques }}</p>
+          <label>
+            <input type="radio" name="answers[{{ question.id }}]" value="opt1">
+            {{ question.opt1 }}
+          </label> <br>
+          <label>
+            <input type="radio" name="answers[{{ question.id }}]" value="opt2">
+            {{ question.opt2 }}
+          </label><br>
+          <label>
+            <input type="radio" name="answers[{{ question.id }}]" value="opt3">
+            {{ question.opt3 }}
+          </label><br>
+          <label>
+            <input type="radio" name="answers[{{ question.id }}]" value="opt4">
+            {{ question.opt4 }}
+          </label><br><br>
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

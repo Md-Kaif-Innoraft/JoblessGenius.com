@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}JoblessGenius{% endblock %}
+
+{% block body %}
+
+<div class="main">
+  <div class="container text-center text-white pt-4"><br>
+  <h1 class="text-warning">Welcome To JoblessGenius.com</h1><br>
+  <h3>Whether you're a recent graduate taking your first steps into the workforce or an experienced professional seeking new challenges, JoblessGenius is here to support you at every stage of your career journey.</h3>
+  <h2 class="mt-4 text-info">Join JoblessGenius.com today and take the next step towards unlocking your full potential and achieving career success!</h2>
+  <div class="buttons mt-4">
+<a href="{{path('app_login')}}">
+	<button class="btn btn-primary">Click here to Log In</button>
+</a>
+
+<a href="{{path('app_register')}}">
+<button class="btn btn-primary">Click here to Register</button>
+
+</a>
+
+  </div>
+  </div>
+</div>
+
+{% endblock %}

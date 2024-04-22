@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All Exam
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-4">
+
+		<div class="header mt-4 border border-dark rounded bg-dark text-light">
+			<h2 class="text-center">All Created Exams</h2>
+		</div>
+		<div class="content box-shadow rounded mt-2 p-4 text-center">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">SNo</th>
+						<th scope="col">Exam Name</th>
+						<th scope="col">Status</th>
+						<th scope="col">Duration</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for index, exam in exams %}
+						<tr>
+							<th scope="row">{{ loop.index }}</th>
+							<td>{{exam.title}}</td>
+							<td>{{exam.status}}</td>
+							<td>{{ exam.duration|date('H:i:s') }}</td>
+							<td>
+								<a href="{{ path('app_deleteExam', {'examid': exam.id})}}">
+									<button class="btn btn-danger">Delete</button>
+								</a>
+							</td>
+						</tr>
+          {% endfor %}
+				</tbody>
+			</table>
+
+			<a href="{{ path('app_logout') }}">
+				<button class="btn btn-danger">Log out</button>
+			</a>
+			<a href="{{ path('app_createExam') }}">
+				<button class="btn btn-primary">Create New Exam</button>
+			</a>
+      <a href="{{ path('app_admin') }}">
+				<button class="btn btn-primary">Home</button>
+			</a>
+		</div>
+	</div>
+
+{% endblock %}

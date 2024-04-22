@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+{% for message in app.flashes('message') %}
+	<div class="alert alert-success alert-dismissible">{{ message }}
+	</div>
+{% endfor %}
+
+<div class="header mt-4 border border-dark rounded bg-dark text-light">
+  <h2 class="text-center">Hello,{{ app.user.email }}</h2>
+  </div>
+    <div class="content box-shadow rounded mt-2 p-4 text-center">
+      {% if data is not null %}
+        <p>Name: {{data.name}} </p>
+        <p>College Name: {{ data.collegeName }}</p>
+        <p>Email : {{ data.email }}</p>
+        <p>Degree: {{ data.degree }}</p>
+        <p>Branch: {{data.branch}}</p>
+        <p>Graduation Cgpa: {{ data.graduationCgpa }}</p>
+        <p>12th School Name: {{ data.schoolName12 }}</p>
+        <p>12th Percentage: {{ data.per12 }}%</p>
+        <p>10th School Name: {{ data.schoolName10 }}</p>
+        <p>10th Percentage: {{ data.per10 }}%</p>
+        <p>Resume : <a href="https://www.linkedin.com/in/md-kaif-ansari-38a43722b/" target = "_blank">{{data.resume}}</a></p>
+
+        <a href="{{ path('app_editprofile', {id: app.user.id}) }}"><button class="btn btn-success">Edit Profile</button></a>
+        <a href="{{ path('app_dashboard') }}"><button class="btn btn-primary">Home</button></a>
+      {% else %}
+        <a href="{{ path('app_create-profile') }}"><button class="btn btn-success">Create Profile</button></a>
+        <a href="{{ path('app_dashboard') }}"><button class="btn btn-primary">Home</button></a>
+      {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

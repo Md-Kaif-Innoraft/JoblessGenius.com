@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminController!
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+	<div class="form-box rounded box-shadow">
+    <h1>Profile</h1>
+
+    {{ form_errors(form) }}
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.name, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.email, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.college_name, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.degree, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.branch, {'attr':{"class": "form-control"}}) }}
+
+    {{ form_row(form.graduation_cgpa, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.school_name_12, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.school_name_10, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.per_10, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.per_12, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_row(form.resume, {'attr': {"class": "form-control"}}) }}
+
+    {{ form_widget(form.user_id, {'attr': {'style': 'display: none;'}, 'value': app.user.id}) }}
+
+    <button type="submit" class="btn btn-success mt-4">Add Details</button>
+
+    {{ form_end(form) }}
+    <br>
+    <a class = "btn btn-primary" href="{{ path('app_dashboard') }}">Home</a>
+	</div>
+</div>
+
+{% endblock %}
