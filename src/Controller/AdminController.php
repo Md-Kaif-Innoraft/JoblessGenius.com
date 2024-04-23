@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Exam;
 use App\Form\ExamType;
 use App\Entity\ExamResult;
+use App\Service\AdminService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,15 +25,22 @@ class AdminController extends AbstractController
   private $em;
 
   /**
+   * @var object $adminService
+   *  AdminService to call methods of admin services.
+   */
+  private $adminService;
+
+  /**
    * Constructor to initialize instace of class.
    */
-  public function __construct(EntityManagerInterface $em)
+  public function __construct(EntityManagerInterface $em, AdminService $service)
   {
     $this->em = $em;
+    $this->adminService = $service;
   }
 
   /**
-   * Function index for routing to index page of admin.
+   * Method index for routing to index page of admin.
    *
    * @return Response
    *  return respose to render admin index page.
@@ -44,7 +52,7 @@ class AdminController extends AbstractController
   }
 
   /**
-   * Function createExam for creating exam and routing to create page of admin.
+   * Method createExam for creating exam and routing to create page of admin.
    *
    * @return Response
    *  return respose to render create Exam page.
@@ -70,13 +78,13 @@ class AdminController extends AbstractController
       $this->addFlash('message', 'Exam Created Successfully');
       return $this->redirectToRoute('app_admin');
     }
-    return $this->render('admin/createExam.html.twig', [
+    return $this->render('admin/create-exam.html.twig', [
       'form' => $form->createview()
     ]);
   }
 
   /**
-   * Function createdExam for createdExam and routing to created page of admin.
+   * Method createdExam for createdExam and routing to created page of admin.
    *
    * @return Response
    *  return respose to render created Exam page.
@@ -91,13 +99,13 @@ class AdminController extends AbstractController
       ->getQuery()
       ->getResult();
     // Render Created Exam page.
-    return $this->render('admin/createdExam.html.twig',[
+    return $this->render('admin/created-exam.html.twig',[
       'exams' => $exams
     ]);
   }
 
   /**
-   * Function deleteExam for deleting exam and routing to delete exam page of admin.
+   * Method deleteExam for deleting exam and routing to delete exam page of admin.
    *
    * @param int $examid
    *
@@ -117,7 +125,7 @@ class AdminController extends AbstractController
   }
 
   /**
-   * Function adminResult for Result and routing to result page of admin.
+   * Method adminResult for Result and routing to result page of admin.
    *
    * @return Response
    *  return respose to render result page.
@@ -127,32 +135,8 @@ class AdminController extends AbstractController
   {
     // Getting owner of exam.
     $owner = $this->getUser()->getOwner();
-    // Getting all the result from database.
-    $allResults = $this->em->getRepository(ExamResult::class)->findAll();
-    // Initializing empty arrays to store results.
-    $studentNames = [];
-    $collegeNames = [];
-    $results = [];
-    $totalMarks = [];
-    $examNames = [];
-    // For loop to traverse all results.
-    for ($i = 0; $i < count($allResults); $i++)
-    {
-      // Check if required result belongs to the required owner.
-      if ($allResults[$i]->getExamId()->getOwner() == $owner)
-      {
-        // Storing students name.
-        $studentNames[] = $allResults[$i]->getUserId()->getProfile()->getName();
-        // Storing college names.
-        $collegeNames[] = $allResults[$i]->getUserId()->getProfile()->getCollegeName();
-        // Storing results of students.
-        $results[] = $allResults[$i]->getResult();
-        // Storing exam names.
-        $examNames[] = $allResults[$i]->getExamId()->getTitle();
-        // Stroing total marks.
-        $totalMarks[] = $allResults[$i]->getExamId()->getTotalMarks();
-      }
-    }
+    // Getting results data.
+   [$studentNames, $collegeNames, $results, $examNames, $totalMarks] = $this->adminService->getResultAdmin($owner);
     // Render admin result page.
     return $this->render('admin/result.html.twig',
       [

@@ -9,15 +9,16 @@ use App\Entity\Profile;
 use App\Entity\Question;
 use App\Form\ProfileType;
 use App\Entity\ExamResult;
+use App\Service\MyService;
 use App\Entity\ExamApplication;
 use App\Form\ExamApplicationType;
+use function PHPUnit\Framework\isEmpty;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-use function PHPUnit\Framework\isEmpty;
 
 /**
  * Class Dashboard Controller for routing related to admin.
@@ -31,12 +32,15 @@ class DashboardController extends AbstractController
    */
   private $em;
 
+  private $service;
+
   /**
    * Constructor to initialize instace of class.
    */
-  public function __construct(EntityManagerInterface $em)
+  public function __construct(EntityManagerInterface $em, MyService $service)
   {
     $this->em = $em;
+    $this->service = $service;
   }
 
   /**
@@ -53,7 +57,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function profile for routing to profile page of dashboard.
+   * Method profile for routing to profile page of dashboard.
    *
    * @param int $id
    *  Request from url.
@@ -62,7 +66,7 @@ class DashboardController extends AbstractController
    *  return respose to render profile page.
    */
   #[Route('/profile/{id}', name: 'app_profile')]
-  public function pindexrofile(int $id): Response
+  public function profile(int $id): Response
   {
     $this->denyAccessUnlessGranted(attribute: "IS_AUTHENTICATED_FULLY");
     $data = $this->em->getRepository(Profile::class)->findOneBy(['user_id' =>$id]);
@@ -70,7 +74,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function create-profile for routing to create profile page of user.
+   * Method create-profile for routing to create profile page of user.
    *
    * @param Request $request
    *  Request from url.
@@ -85,13 +89,13 @@ class DashboardController extends AbstractController
     $Profile = new Profile();
     // Create form of profile type.
     $form = $this->createForm(ProfileType::class, $Profile);
-    // Handling form request.
+    // HanFunctiondling form request.
     $form->handleRequest($request);
     // Check if form is submitted and valid.
     if ($form->isSubmitted() && $form->isValid())
     {
-      $this->em->persist($Profile);
-      $this->em->flush();
+      // Persist the data to the database.
+      $this->service->setDataBase($Profile);
       $this->addFlash('message', 'Profile Created Successfully');
       // Redirect to dashboard.
       return $this->redirectToRoute('app_dashboard');
@@ -103,7 +107,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function editProfile for routing to editprofile page of user.
+   * Method editProfile for routing to editprofile page of user.
    *
    * @param Request $request
    *  Request from the url.
@@ -125,9 +129,9 @@ class DashboardController extends AbstractController
     // Check if the form is submitted and valid.
     if ($form->isSubmitted() && $form->isValid())
     {
-      $this->em->persist($data);
-      $this->em->flush();
-
+      // Persist the data to the database
+      $this->service->setDataBase($data);
+      // Flash message upon successfully data updated.
       $this->addFlash('message', 'Data Updated Successfully');
       // Redirect to dashboard.
       return $this->redirectToRoute('app_dashboard');
@@ -139,7 +143,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function upcomingexam for routing to upcomingexam page of user.
+   * Method upcomingexam for routing to upcomingexam page of user.
    *
    * @return Response
    *  return respose to render upcomingexam page.
@@ -148,34 +152,14 @@ class DashboardController extends AbstractController
   public function upcomingExam(): Response
   {
     $this->denyAccessUnlessGranted(attribute: "IS_AUTHENTICATED_FULLY");
-    // Data of all exam .
-    $allExams = $this->em->getRepository(Exam::class)->findAll();
-    // Data of all applied exams.
-    $appliedExams = $this->em->getRepository(ExamApplication::class)->findAll();
-    // Array to store data of upcoming exam.
-    $upcomingExams = [];
-
-    // Create an array of applied exam IDs
-    $appliedExamIds = [];
-    // For loop to traverse and get id of applied exams.
-    foreach ($appliedExams as $appliedExam) {
-      $appliedExamIds[] = $appliedExam->getExamId()->getId();
-    }
-
-    // Check each exam in $allExams and add to $upcomingExams if not applied
-    foreach ($allExams as $exam) {
-      if (!in_array($exam->getId(), $appliedExamIds))
-      {
-        $upcomingExams[] = $exam;
-      }
-    }
+    // Data of all upcoming exams .
+    $upcomingExams = $this->service->getUpcomingExam();
     // Render upcoming exam page.
-    return $this->render('dashboard/upcomingExam.html.twig', ['data' => $upcomingExams]);
+    return $this->render('dashboard/upcoming-exam.html.twig', ['data' => $upcomingExams]);
   }
 
-
   /**
-   * Function appliedexam for routing to appliedexam page of user.
+   * Method appliedexam for routing to appliedexam page of user.
    *
    * @return Response
    *  return respose to render appliedexam page.
@@ -185,31 +169,10 @@ class DashboardController extends AbstractController
   {
     $this->denyAccessUnlessGranted(attribute: "IS_AUTHENTICATED_FULLY");
     $id = $this->getUser()->getId();
-    // Array to store exam names.
-    $examsName = [];
-    // Array to store exam status.
-    $status = [];
-    // Array to store owner names.
-    $owner = [];
-    // Array to store duration of exam.
-    $duration = [];
-    // Array to store exam ids.
-    $examId = [];
-    // Data of all applied exams.
-    $appliedExam = $this->em->getRepository(ExamApplication::class)->findAll();
-    for ($i=0; $i<count($appliedExam); $i++)
-    {
-      if ($id == $appliedExam[$i]->getUserId()->getId())
-      {
-        $examsName[] = $appliedExam[$i]->getExamId()->getTitle();
-        $examId[] = $appliedExam[$i]->getExamId()->getId();
-        $status[] = $appliedExam[$i]->getExamId()->getStatus();
-        $owner[] = $appliedExam[$i]->getExamId()->getOwner();
-        $duration[] = $appliedExam[$i]->getExamId()->getDuration();
-      }
-    }
+    // Getting Details of Applied Exams.
+    [$examsName, $status, $owner, $duration, $examId] = $this->service->appliedExam($id);
     // Render applied Exam page.
-    return $this->render('dashboard/appliedExam.html.twig',[
+    return $this->render('dashboard/applied-exam.html.twig',[
       'examsName' => $examsName,
       'status' => $status,
       'owner' => $owner,
@@ -219,7 +182,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function applyExam for routing to applyExam page of user.
+   * Method applyExam for routing to applyExam page of user.
    *
    * @param Request $request
    *  Request from the url.
@@ -236,15 +199,9 @@ class DashboardController extends AbstractController
   {
     // Create object of ExamApplication.
     $ExamApplication = new ExamApplication();
-    // Find user data from database.
-    $user = $this->em->getRepository(User::class)->find($id);
-    // Find exam data from database.
-    $exam = $this->em->getRepository(Exam::class)->find($examid);
+    // Set Exam id and User id in ExamApplication.
+    $this->service->setExamApplicationData($id, $examid, $ExamApplication);
 
-    // Set Exam id in Exam Application.
-    $ExamApplication->setExamId($exam);
-    // Set user id in Exam Application.
-    $ExamApplication->setUserId($user);
     // Create form.
     $form = $this->createForm(ExamApplicationType::class, $ExamApplication);
     // Handle form request.
@@ -252,20 +209,19 @@ class DashboardController extends AbstractController
     // Check if form is submitted and valid.
     if ($form->isSubmitted() && $form->isValid())
     {
-      $this->em->persist($ExamApplication);
-      $this->em->flush();
-
+      // Persist the data to the database
+      $this->service->setDataBase($ExamApplication);
       $this->addFlash('message', 'Successfully, Applied for the Exam.');
       return $this->redirectToRoute('app_upcomingexam');
     }
     // Render apply exam page.
-    return $this->render('dashboard/applyExam.html.twig', [
+    return $this->render('dashboard/apply-exam.html.twig', [
       'form' => $form->createview()
     ]);
   }
 
   /**
-   * Function takeExamIns for routing to takeExamIns page of user.
+   * Method takeExamIns for routing to takeExamIns page of user.
    *
    * @param int $examid
    *  Taking exam id from url.
@@ -277,13 +233,13 @@ class DashboardController extends AbstractController
    function takeExamIns(int $examid): Response
   {
     // Render Take Exam instruction page.
-    return $this->render('dashboard/takeExamIns.html.twig', [
+    return $this->render('dashboard/take-exam-ins.html.twig', [
       'examid' => $examid
     ]);
   }
 
   /**
-   * Function takeExam for routing to takeExam page of user.
+   * Method takeExam for routing to takeExam page of user.
    *
    * @param int $examid
    *  Taking exam id from url.
@@ -297,14 +253,14 @@ class DashboardController extends AbstractController
     // Getting all question from database.
     $allQuestions = $this->em->getRepository(Question::class)->findAll();
     // Render takeExam page.
-    return $this->render('dashboard/takeExam.html.twig',[
+    return $this->render('dashboard/take-exam.html.twig',[
       'questions' => $allQuestions,
       'examId' => $examid
     ]);
   }
 
   /**
-   * Function submitExam for routing to submitExam page of user.
+   * Method submitExam for routing to submitExam page of user.
    *
    * @param int $examid
    *  Taking exam id from url.
@@ -322,26 +278,16 @@ class DashboardController extends AbstractController
     $examResult->setUserId($this->getUser());
 
     // Retrieve the submitted answers from the form
-    $answers = $request->get('answers');$this->denyAccessUnlessGranted(attribute: "IS_AUTHENTICATED_FULLY");
+    $answers = $request->get('answers');
+    $this->denyAccessUnlessGranted(attribute: "IS_AUTHENTICATED_FULLY");
+
     // Calculate marks based on correct answers
-
-    $totalMarks = 0;
-    if ($answers != null)
-    {
-      foreach ($answers as $questionId => $selectedOption)
-      {
-        $question = $this->em->getRepository(Question::class)->find($questionId);
-        if ($question && $selectedOption === $question->getCorrectAns())
-        {
-          $totalMarks++;
-        }
-      }
-    }
-
+    $totalMarks = $this->service->calculateMarks($answers);
     $examResult->setResult($totalMarks);
+
     // Persist the exam results to the database
-    $this->em->persist($examResult);
-    $this->em->flush();
+    $this->service->setDataBase($examResult);
+
     // Render Exam Result page.
     $this->addFlash('message', 'Data Updated Successfully');
     return $this->redirectToRoute('app_examResult', [
@@ -350,7 +296,7 @@ class DashboardController extends AbstractController
   }
 
   /**
-   * Function examResult for routing to examResult page of user.
+   * Method examResult for routing to examResult page of user.
    *
    * @param Request $request
    *  Request from the url.
@@ -364,13 +310,13 @@ class DashboardController extends AbstractController
   public function examResult(Request $request, int $result): Response
   {
     // Render result page.
-    return $this->render('dashboard/examResult.html.twig', [
+    return $this->render('dashboard/exam-result.html.twig', [
       'result' => $result
     ]);
   }
 
   /**
-   * Function result for routing to result page of user.
+   * Method result for routing to result page of user.
    *
    * @param Request $request
    *  Request from the url.
@@ -383,26 +329,10 @@ class DashboardController extends AbstractController
   {
     // Id of current user.
     $id = $this->getUser()->getId();
-    // Arrray to store result.
-    $results = [];
-    // Arrray to store names.
-    $names =[] ;
-    // Arrray to store owner.
-    $owners = [];
-    // Arrray to store total marks.
-    $totalMarks = [];
-    // Data of all the results.
-    $allResults = $this->em->getRepository(ExamResult::class)->findAll();
-    for($i=0; $i<count($allResults); $i++)
-    {
-      if ($allResults[$i]->getUserId()->getId() == $id)
-      {
-        $results[] = $allResults[$i]->getResult();
-        $names[] = $allResults[$i]->getExamId()->getTitle();
-        $owners[] = $allResults[$i]->getExamId()->getOwner();
-        $totalMarks[] = $allResults[$i]->getExamId()->getTotalMarks();
-      }
-    }
+
+    // Getting Data of results.
+    [$results, $names, $owners, $totalMarks] = $this->service->getResult($id);
+
     // Render the result page.
     return $this->render('dashboard/result.html.twig',[
       'results' => $results,
