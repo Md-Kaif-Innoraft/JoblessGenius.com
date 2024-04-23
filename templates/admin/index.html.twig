@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin!{% endblock %}
+
+{% block body %}
+
+<div class="container text-center header mt-4 m-b-4 p-4 border border-dark rounded bg-dark text-light">
+	<h2>Hello,{{ app.user.email }}</h2>
+  <a href="{{ path('app_logout') }}"><button class="btn btn-danger mt-4">Log Out</button></a>
+</div>
+
+<div class="container mt-4 content d-flex text-center">
+
+  <div class="box rounded box-shadow m-4 p-4">
+    <h2 class="mt-4">All Exams</h2>
+    <p>Click here to view all the Exams created by you.</p>
+    <a href="{{ path('app_createdExam')}}">
+      <button class="btn btn-primary">View All Exams</button>
+    </a>
+  </div>
+
+  <div class="box rounded box-shadow m-4 pt-4">
+    <h2 class="mt-4">Create New Exam</h2>
+    <p>Click here to created new Exam.</p>
+    <a href="{{ path('app_createExam')}}">
+      <button class="btn btn-primary">Create Exams</button>
+    </a>
+  </div>
+
+  <div class="box rounded box-shadow m-4 pt-4">
+    <h2 class="mt-4">Show Results</h2>
+    <p>Click here to See Results.</p>
+    <a href="{{ path('app_adminResult')}}">
+      <button class="btn btn-primary">Create Exams</button>
+    </a>
+  </div>
+
+</div>
+
+{% endblock %}

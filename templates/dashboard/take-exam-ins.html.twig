@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Applied Exam
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+  <div class="header mt-4 border border-dark rounded bg-dark text-light">
+    <h2 class="text-center">Instructions:</h2>
+	</div>
+
+  <div class="content box-shadow rounded mt-2 p-4 ">
+    <ol>
+      <li>
+        <p>This exam consists of multiple-choice questions (MCQs).</p>
+      </li>
+      <li>
+        <p>Each question has four options labeled as A, B, C, and D.</p>
+      </li>
+      <li>
+        <p>Choose the correct option for each question by clicking the corresponding radio button.</p>
+      </li>
+      <li>
+        <p>For each correct answer, you will earn 1 mark.</p>
+      </li>
+      <li>
+        <p>There is no negative marking for incorrect answers.</p>
+      </li>
+      <li>
+        <p>Ensure you have selected your answer before proceeding to the next question.</p>
+      </li>
+      <li>
+        <p>You have a limited time to complete the exam, so manage your time wisely.</p>
+      </li>
+      <li>
+        <p>Once you submit the exam, you will not be able to change your answers.</p>
+      </li>
+      <li>
+        <p>Click the "Submit" button at the end of the exam to finalize your responses.</p>
+      </li>
+    </ol><br><br>
+    <div class="container text-center mt-4">
+      <a href="{{ path('app_takeExam', {'examid': examid} )}}">
+      <button class="btn btn-primary">Start Exam</button>
+      </a>
+    </div>
+	</div>
+</div>
+
+{% endblock %}

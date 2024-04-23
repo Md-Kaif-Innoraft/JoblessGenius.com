@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Result
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-4">
+
+		<div class="header mt-4 border border-dark rounded bg-dark text-light">
+			<h2 class="text-center">Hello,{{ app.user.email }}</h2>
+		</div>
+		<div class="content box-shadow rounded mt-2 p-4 text-center">
+      <h1>Thanks for Taking The Exam.</h1>
+      <h2>Hello your result is : {{result}}</h2>
+      <p>We wish best for your future.</p>
+      <a href="{{ path('app_dashboard') }}">
+        <button class="btn btn-success">Home</button>
+      </a>
+      <a href="{{ path('app_logout') }}">
+        <button class="btn btn-danger">Log out</button>
+      </a>
+		</div>
+	</div>
+
+{% endblock %}

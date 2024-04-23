@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Apply for exam
+{% endblock %}
+
+{% block body %}
+
+	<div class="container mt-4">
+		<div class="form-box rounded box-shadow">
+
+			<h1>Apply here</h1>
+
+			{{ form_errors(form) }}
+
+			{{ form_start(form) }}
+
+      {{ form_widget(form.applied_at, {'attr': {'style': 'display: none'}}) }}
+
+	    <button type="submit" class="btn btn-success mt-4">Apply</button>
+
+			{{ form_end(form) }}
+			<br>
+			<a class="btn btn-primary" href="{{ path('app_dashboard') }}">Home</a>
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Result
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+  <div class="header mt-4 border border-dark rounded bg-dark text-light">
+    <h2 class="text-center">Result of All Exams Attempted by you.</h2>
+  </div>
+	<div class=" box-shadow rounded mt-2 p-4 text-center">
+    <table class="table myTable">
+			<thead>
+        <tr>
+          <th scope="col">SNo</th>
+          <th scope="col">Exam Name</th>
+          <th scope="col">Organization</th>
+          <th scope="col">Matks Obtained</th>
+          <th scope="col">Total Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index, result in results %}
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{names[index]}}</td>
+            <td>{{owners[index]}}</td>
+            <td>{{result}}</td>
+            <td>{{totalMarks[index]}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+      <a href="{{ path('app_upcomingexam') }}">
+				<button class="btn btn-primary">Upcoming Exams</button>
+			</a>
+			<a href="{{ path('app_dashboard') }}">
+        <button class="btn btn-primary">Home</button>
+			</a>
+      <a href="{{ path('app_logout') }}">
+        <button class="btn btn-danger">Log out</button>
+      </a>
+		</div>
+	</div>
+
+{% endblock %}
