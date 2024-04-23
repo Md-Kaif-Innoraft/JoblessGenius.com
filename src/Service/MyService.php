@@ -123,7 +123,16 @@ class MyService {
     return $totalMarks;
   }
 
-  public function appliedExam(int $id)
+  /**
+   * Function appliedExam of user.
+   *
+   * @param int $id
+   *  Take id of user.
+   *
+   * @return array
+   *  return data of appliedExam.
+   */
+  public function appliedExam(int $id): Array
   {
     // Data of all applied exams.
     $appliedExam = $this->em->getRepository(ExamApplication::class)->findAll();
@@ -151,6 +160,15 @@ class MyService {
     return [$examsName, $status, $owner, $duration, $examId];
   }
 
+  /**
+   * Function getResult of user.
+   *
+   * @param int $id
+   *  Take id of user.
+   *
+   * @return array
+   *  return data of result of user.
+   */
   public function getResult (int $id): array
   {
     // Arrray to store result.
