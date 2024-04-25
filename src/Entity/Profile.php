@@ -2,9 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfileRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @const NAMEPATTERN
+ *  Patteren of name.
+ */
+const NAMEPATTERN = "/^[a-zA-Z ]+$/";
+/**
+ * @const MARKSVALIDATE
+ *  Patteren of name.
+ */
+const MARKSVALIDATE = "/^\d+$/";
 
 /**
  * Class Profile of entity type to set and get profile data.
@@ -20,7 +31,7 @@ class Profile
   #[ORM\Id]
   #[ORM\GeneratedValue]
   #[ORM\Column]
-  private ?int $id = null;
+  private ?int $id = NULL;
 
   /**
    * @var integer $user_id
@@ -28,84 +39,132 @@ class Profile
    */
   #[ORM\OneToOne(inversedBy: 'profile', cascade: ['persist', 'remove'])]
   #[ORM\JoinColumn(nullable: false)]
-  private ?User $user_id = null;
+  private ?User $user_id = NULL;
 
   /**
    * @var string $name
    *  It stores name of user for every user.
    */
+  #[Assert\Regex(
+    pattern: NAMEPATTERN,
+    match: TRUE,
+    message: 'Your name cannot contain a number.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $name = null;
+  private ?string $name = NULL;
 
   /**
    * @var string $college_name
    *  It stores college name of for every user.
    */
+  #[Assert\Regex(
+    pattern: NAMEPATTERN,
+    match: TRUE,
+    message: 'College name cannot contain a number.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $college_name = null;
+  private ?string $college_name = NULL;
 
   /**
    * @var string $email
    *  It stores email of for every single user.
    */
   #[ORM\Column(length: 255)]
-  private ?string $email = null;
+  private ?string $email = NULL;
 
   /**
    * @var string $degree
    *  It stores degree of for every single user.
    */
+  #[Assert\Regex(
+    pattern: NAMEPATTERN,
+    match: TRUE,
+    message: 'Cannot contain a number.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $degree = null;
+  private ?string $degree = NULL;
 
   /**
    * @var string $branch
    *  It stores branch of for every single user.
    */
+  // #[Assert\Regex(
+  //   pattern: NAMEPATTERN,
+  //   match: TRUE,
+  //   message: 'Cannot contain a number.',
+  // )]
   #[ORM\Column(length: 255)]
-  private ?string $branch = null;
+  private ?string $branch = NULL;
 
   /**
    * @var int $graduemailation_cgpa
    *  It stores graduation_cgpa of for every single user.
    */
+  #[Assert\Regex(
+    pattern: MARKSVALIDATE,
+    match: TRUE,
+    message: 'Only numbers Allowed.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $graduation_cgpa = null;
+  private ?string $graduation_cgpa = NULL;
 
   /**
    * @var string $school_name_12
    *  It stores school name of class 12 of for every single user.
    */
+  #[Assert\Regex(
+    pattern: NAMEPATTERN,
+    match: TRUE,
+    message: 'School name cannot contain a number.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $school_name_12 = null;
+  private ?string $school_name_12 = NULL;
 
   /**
    * @var int $per_12
    *  It stores percentage in class 12 of for every single user.
    */
   #[ORM\Column]
-  private ?int $per_12 = null;
+  #[Assert\Regex(
+    pattern: MARKSVALIDATE,
+    match: TRUE,
+    message: 'Only numbers Allowed.',
+  )]
+  private ?int $per_12 = NULL;
 
   /**
    * @var string $school_name_10
    *  It stores school name of class 10 of for every single user.
    */
+  #[Assert\Regex(
+    pattern: NAMEPATTERN,
+    match: TRUE,
+    message: 'Your name cannot contain a number.',
+  )]
   #[ORM\Column(length: 255)]
-  private ?string $school_name_10 = null;
+  private ?string $school_name_10 = NULL;
 
   /**
    * @var int $per_10
    *  It stores percentage of class 10 of for every single user.
    */
+  #[Assert\Regex(
+    pattern: MARKSVALIDATE,
+    match: TRUE,
+    message: 'Only numbers Allowed.',
+  )]
   #[ORM\Column]
-  private ?int $per_10 = null;
+  private ?int $per_10 = NULL;
 
   /**
    * @var string $resule
    *  It stores resume link of for every single user.
    */
   #[ORM\Column(length: 255)]
-  private ?string $resume = null;
+  private ?string $resume = NULL;
+
+  #[ORM\Column(length: 255, nullable: true)]
+  private ?string $Image = null;
 
   /**
    * Function to get Id of profle.
@@ -415,6 +474,31 @@ class Profile
   public function setResume(string $resume): static
   {
     $this->resume = $resume;
+    return $this;
+  }
+
+  /**
+   * Function to get Image of user.
+   *
+   * @return string
+   *  Returns image.
+   */
+  public function getImage(): ?string
+  {
+    return $this->Image;
+  }
+
+  /**
+   * Function to set Image of user.
+   *
+   * @param string $Image
+   *
+   * @return static
+   *  Returns instance of current class.
+   */
+  public function setImage(?string $Image): static
+  {
+    $this->Image = $Image;
     return $this;
   }
 }

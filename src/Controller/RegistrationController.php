@@ -2,20 +2,21 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\User;
+use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
 use App\Security\AppAuthenticator;
-use App\Security\EmailVerifier;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 /**
@@ -70,9 +71,13 @@ class RegistrationController extends AbstractController
             $form->get('plainPassword')->getData()
           )
       );
-
-      $entityManager->persist($user);
-      $entityManager->flush();
+      try {
+        $entityManager->persist($user);
+        $entityManager->flush();
+      }
+      catch (Exception $e) {
+        throw new Exception("Data not set");
+    }
 
       // Generate a signed url and email it to the user.
       $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,

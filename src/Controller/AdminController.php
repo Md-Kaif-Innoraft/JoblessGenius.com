@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Exam;
 use App\Form\ExamType;
 use App\Entity\ExamResult;
+use PHPUnit\Util\Exception;
 use App\Service\AdminService;
+use App\Service\ProtectAdminRoutes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class AdminController extends AbstractController
 {
+  private $allowAdminRoutes;
 
   /**
    * @var object $em
@@ -37,6 +40,7 @@ class AdminController extends AbstractController
   {
     $this->em = $em;
     $this->adminService = $service;
+    $this->allowAdminRoutes = new ProtectAdminRoutes($this->em);
   }
 
   /**
@@ -48,6 +52,13 @@ class AdminController extends AbstractController
   #[Route('/admin', name: 'app_admin')]
   public function index(): Response
   {
+    // Protecting the admin routes by checking user role.
+    if ($this->allowAdminRoutes->isAdmin($this->getUser()) === FALSE)
+    {
+      // Adding a flash message on redirectinf to dashboard.
+      $this->addFlash('success', 'Redirected to dashboard!');
+      return $this->redirectToRoute('app_dashboard');
+    }
     return $this->render('admin/index.html.twig');
   }
 
@@ -61,6 +72,13 @@ class AdminController extends AbstractController
 
   public function createExam(Request $request): Response
   {
+    // Protecting the admin routes by checking user role.
+    if ($this->allowAdminRoutes->isAdmin($this->getUser()) === FALSE)
+    {
+      // Adding a flash message on redirectinf to dashboard.
+      $this->addFlash('success', 'Redirected to dashboard!');
+      return $this->redirectToRoute('app_dashboard');
+    }
     // Get owner name of exam.
     $owner = $this->getUser()->getOwner();
     // Create a new object of Exam.
@@ -72,11 +90,17 @@ class AdminController extends AbstractController
     // Handle request.
     $form->handleRequest($request);
     // Checking if the form is submitted or not.
-    if ($form->isSubmitted() && $form->isValid()) {
-      $this->em->persist($Exam);
-      $this->em->flush();
-      $this->addFlash('message', 'Exam Created Successfully');
-      return $this->redirectToRoute('app_admin');
+    try {
+      if ($form->isSubmitted() && $form->isValid())
+      {
+        $this->em->persist($Exam);
+        $this->em->flush();
+        $this->addFlash('message', 'Exam Created Successfully');
+        return $this->redirectToRoute('app_admin');
+      }
+    }
+    catch (Exception $e) {
+      throw new Exception("Data not set");
     }
     return $this->render('admin/create-exam.html.twig', [
       'form' => $form->createview()
@@ -92,6 +116,13 @@ class AdminController extends AbstractController
   #[Route('/createdExam', name: 'app_createdExam')]
   public function createdExam(): Response
   {
+    // Protecting the admin routes by checking user role.
+    if ($this->allowAdminRoutes->isAdmin($this->getUser()) === FALSE)
+    {
+      // Adding a flash message on redirectinf to dashboard.
+      $this->addFlash('success', 'Redirected to dashboard!');
+      return $this->redirectToRoute('app_dashboard');
+    }
     // Query buider to get result where owner is required owner.
     $exams = $this->em->getRepository(Exam::class)->createQueryBuilder('e')
       ->where('e.owner = :owner')
@@ -115,6 +146,13 @@ class AdminController extends AbstractController
   #[Route('/deleteExam/{examid}', name: 'app_deleteExam')]
   public function deleteExam(int $examid): Response
   {
+    // Protecting the admin routes by checking user role.
+    if ($this->allowAdminRoutes->isAdmin($this->getUser()) === FALSE)
+    {
+      // Adding a flash message on redirectinf to dashboard.
+      $this->addFlash('success', 'Redirected to dashboard!');
+      return $this->redirectToRoute('app_dashboard');
+    }
     // Getting exams where exam id is required id.
     $exam = $this->em->getRepository(Exam::class)->find($examid);
     $this->em->remove($exam);
@@ -133,6 +171,13 @@ class AdminController extends AbstractController
   #[Route('/adminResult', name: 'app_adminResult')]
   public function result(Request $request): Response
   {
+    // Protecting the admin routes by checking user role.
+    if ($this->allowAdminRoutes->isAdmin($this->getUser()) === FALSE)
+    {
+      // Adding a flash message on redirectinf to dashboard.
+      $this->addFlash('success', 'Redirected to dashboard!');
+      return $this->redirectToRoute('app_dashboard');
+    }
     // Getting owner of exam.
     $owner = $this->getUser()->getOwner();
     // Getting results data.

@@ -15,25 +15,29 @@
 
     {{ form_row(form.name, {'attr': {"class": "form-control"}}) }}
 
-    {{ form_row(form.email, {'attr': {"class": "form-control"}}) }}
+	  <div class="d-none">
+      {{ form_row(form.email, {'attr': {"class": "form-control", "value": app.user.email, "style": "display: none;"}}) }}
+    </div>
 
-    {{ form_row(form.college_name, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.college_name) }}
 
-    {{ form_row(form.degree, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.degree) }}
 
-    {{ form_row(form.branch, {'attr':{"class": "form-control"}}) }}
+    {{ form_row(form.branch) }}
 
-    {{ form_row(form.graduation_cgpa, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.graduation_cgpa) }}
 
-    {{ form_row(form.school_name_12, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.school_name_12) }}
 
-    {{ form_row(form.school_name_10, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.school_name_10) }}
 
-    {{ form_row(form.per_10, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.per_10) }}
 
-    {{ form_row(form.per_12, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.per_12) }}
 
-    {{ form_row(form.resume, {'attr': {"class": "form-control"}}) }}
+    {{ form_row(form.resume) }}<br>
+
+    {{ form_row(form.Image) }}
 
     {{ form_widget(form.user_id, {'attr': {'style': 'display: none;'}, 'value': app.user.id}) }}
 

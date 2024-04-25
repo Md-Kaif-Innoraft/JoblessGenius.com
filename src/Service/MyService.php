@@ -72,12 +72,13 @@ class MyService {
    * @return array
    *  return array upcomingexam data.
    */
-  public function getUpcomingExam(): Array
+  public function getUpcomingExam(int $id): Array
   {
     // Data of all Exams.
     $allExams = $this->em->getRepository(Exam::class)->findAll();
+    // dd($allExams);
     // Data of all applied exams.
-    $appliedExams = $this->em->getRepository(ExamApplication::class)->findAll();
+    $appliedExams = $this->em->getRepository(ExamApplication::class)->findBy(['user_id'=> $id]);
     // Array to store data of upcoming exam.
     $upcomingExams = [];
 
@@ -180,7 +181,7 @@ class MyService {
     // Arrray to store total marks.
     $totalMarks = [];
     // Data of all the results.
-    $allResults = $this->em->getRepository(ExamResult::class)->findAll();
+    $allResults = $this->em->getRepository(ExamResult::class)->findBy([], null, 10);
     for($i=0; $i<count($allResults); $i++)
     {
       if ($allResults[$i]->getUserId()->getId() == $id)

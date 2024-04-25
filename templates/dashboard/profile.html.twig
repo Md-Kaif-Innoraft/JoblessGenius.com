@@ -17,6 +17,9 @@
   </div>
     <div class="content box-shadow rounded mt-2 p-4 text-center">
       {% if data is not null %}
+        <div class="img">
+          <img src="{{asset('uploads/Images/'~ data.Image)}}" alt="Image">
+        </div>
         <p>Name: {{data.name}} </p>
         <p>College Name: {{ data.collegeName }}</p>
         <p>Email : {{ data.email }}</p>
@@ -29,7 +32,7 @@
         <p>10th Percentage: {{ data.per10 }}%</p>
         <p>Resume : <a href="https://www.linkedin.com/in/md-kaif-ansari-38a43722b/" target = "_blank">{{data.resume}}</a></p>
 
-        <a href="{{ path('app_editprofile', {id: app.user.id}) }}"><button class="btn btn-success">Edit Profile</button></a>
+        <a href="{{ path('app_editprofile')}}"><button class="btn btn-success">Edit Profile</button></a>
         <a href="{{ path('app_dashboard') }}"><button class="btn btn-primary">Home</button></a>
       {% else %}
         <a href="{{ path('app_create-profile') }}"><button class="btn btn-success">Create Profile</button></a>

@@ -22,27 +22,61 @@
         </tr>
       </thead>
       <tbody>
-        {% for index, result in results %}
-          <tr>
-            <th scope="row">{{ loop.index }}</th>
-            <td>{{names[index]}}</td>
-            <td>{{owners[index]}}</td>
-            <td>{{result}}</td>
-            <td>{{totalMarks[index]}}</td>
-          </tr>
-        {% endfor %}
+          {% for index, result in results %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td>{{names[index]}}</td>
+              <td>{{owners[index]}}</td>
+              <td>{{result}}</td>
+              <td>{{totalMarks[index]}}</td>
+            </tr>
+          {% endfor %}
       </tbody>
     </table>
-      <a href="{{ path('app_upcomingexam') }}">
-				<button class="btn btn-primary">Upcoming Exams</button>
-			</a>
-			<a href="{{ path('app_dashboard') }}">
-        <button class="btn btn-primary">Home</button>
-			</a>
-      <a href="{{ path('app_logout') }}">
-        <button class="btn btn-danger">Log out</button>
-      </a>
-		</div>
+    <button class="btn btn-success" id = "loadMore" >Load More Results</button>
+    <a href="{{ path('app_upcomingexam') }}">
+      <button class="btn btn-primary">Upcoming Exams</button>
+    </a>
+    <a href="{{ path('app_dashboard') }}">
+      <button class="btn btn-primary">Home</button>
+    </a>
+    <a href="{{ path('app_logout') }}">
+      <button class="btn btn-danger">Log out</button>
+    </a>
 	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+  $(document).ready(function(){
+  var offset = {{ results | length }}
+  $('#loadMore').click(function(){
+    $.ajax({
+    url: "{{ path('app_resultLoadMore')}}",
+    method: 'POST',
+    data: {
+      offset: offset
+    },
+    success: function(response) {
+      response.results.forEach(function(result) {
+        var newRow = '<tr>' +
+          '<th scope="row">' + (offset + 1) + '</th>' +
+          '<td>' + result.names + '</td>' +
+          '<td>' + result.owners + '</td>' +
+          '<td>' + result.result + '</td>' +
+          '<td>' + result.totalMarks + '</td>' +
+          '</tr>';
+          console.log(newRow);
+        $('tbody').append(newRow);
+        offset++;
+      });
+    },
+    error: function (xhr, status, error) {
+      console.error('AJAX request failed:', status, error);
+    }
+    })
+  });
+});
+</script>
 
 {% endblock %}
